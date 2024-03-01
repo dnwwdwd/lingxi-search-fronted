@@ -4,7 +4,10 @@ import HomeView from '@/pages/IndexPage.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'home',
+    component: HomeView
+  },
+  {
+    path: '/:category',
     component: HomeView
   },
 ]

@@ -7,9 +7,9 @@
           <template #title>
             <a href="https://blog.hejiajun.icu/">{{ item.title }}</a>
           </template>
-          <template #avatar>
-            <a-avatar src="https://th.bing.com/th/id/R.0cc96a8e86dd1813b9435622bedb63be?rik=086fo0mQBJSUjA&pid=ImgRaw&r=0" />
-          </template>
+            <template #avatar>
+              <a-avatar src="https://th.bing.com/th/id/R.0cc96a8e86dd1813b9435622bedb63be?rik=086fo0mQBJSUjA&pid=ImgRaw&r=0" />
+            </template>
         </a-list-item-meta>
       </a-list-item>
     </template>

@@ -1,7 +1,7 @@
 <template>
   <div class="index-page">
     <a-input-search
-        v-model:value="searchParams.text"
+        v-model:value="searchText"
         placeholder="input search text"
         enter-button="Search"
         size="large"
@@ -28,6 +28,7 @@ import UserList from "@/components/UserList.vue";
 import PictureList from "@/components/PictureList.vue";
 import {useRoute, useRouter} from "vue-router";
 import myAxios from "@/plugins/myAxios";
+import {message} from "ant-design-vue";
 
 const postList = ref([]);
 const userList = ref([]);
@@ -35,14 +36,17 @@ const pictureList = ref([]);
 const router = useRouter();
 const route = useRoute();
 
+const activeKey = route.params.category;
+
 const initSearchParams = {
+  type: activeKey,
   text: "",
   pageSize: 10,
   pageNum: 1,
 };
 
 const searchParams = ref(initSearchParams);
-const activeKey = route.params.category;
+const searchText = ref(route.query.text);
 
 /**
  * 加载数据
@@ -75,19 +79,31 @@ const loadDataOld = (params : any) => {
   });
 };
 
+
 /**
- * 加载数据
+ * 加载单类数据
  * @param params
  */
 const loadData = (params : any) => {
+  const { type } = searchParams.value;
+  if (!type) {
+    message.error('类别为空');
+    return;
+  }
   const query ={
     ...params,
     searchText: params.text,
   };
   myAxios.post('/search/all', query).then((res: any) => {
-    postList.value = res?.postVOList;
-    userList.value = res?.userVOList;
-    pictureList.value = res?.pictureVOList;
+    if (type === 'post') {
+      postList.value = res?.dataSourceList;
+    }
+    if (type === 'user') {
+      userList.value = res?.dataSourceList;
+    }
+    if (type === 'picture') {
+      pictureList.value = res?.dataSourceList;
+    }
   });
 };
 
@@ -98,15 +114,21 @@ watchEffect(() => {
   searchParams.value = {
     ...initSearchParams,
     text: route.query.text,
+    type: route.params.category,
   } as any;
+  loadData(searchParams.value);
 });
+
 
 const onSearch = (value: string) => {
   console.log(value);
   router.push({
-    query: searchParams.value
+    query: {
+      ...searchParams.value,
+      text: value,
+    },
   });
-  loadData(searchParams.value);
+
 };
 
 const onTabChange = (key: string) => {
